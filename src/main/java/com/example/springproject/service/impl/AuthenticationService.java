@@ -34,66 +34,67 @@ import static com.example.springproject.constant.ExceptionCode.DUPLICATE_USERNAM
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    private final JwtService jwtService;
+  private final JwtService jwtService;
 
-    private final AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
 
-    /**
-     * Registers a new user with the provided information.
-     * Performs username duplication check and encodes the password.
-     * Generates a JWT token for the registered user.
-     *
-     * @param dto UserRequest containing user information
-     * @return UserResponse with registered user details and JWT token
-     */
-    @Transactional
-    public UserResponse register(UserRequest dto){
-        checkUsernameIfExist(dto.getUsername());
-        User user = MapperUtils.toEntity(dto, User.class);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setCreatedAt(DateUtils.getCurrentTimeMillis());
-        user.setRole(Role.USER);
-        userRepository.save(user);
-        return new UserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getRole(),
-                jwtService.generateToken(new CustomUserDetail(user))
-        );
+  /**
+   * Registers a new user with the provided information.
+   * Performs username duplication check and encodes the password.
+   * Generates a JWT token for the registered user.
+   *
+   * @param dto UserRequest containing user information
+   * @return UserResponse with registered user details and JWT token
+   */
+  @Transactional
+  public UserResponse register(UserRequest dto) {
+    checkUsernameIfExist(dto.getUsername());
+    User user = MapperUtils.toEntity(dto, User.class);
+    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+    user.setCreatedAt(DateUtils.getCurrentTimeMillis());
+    user.setRole(Role.USER);
+    userRepository.save(user);
+    return new UserResponse(
+          user.getId(),
+          user.getUsername(),
+          user.getEmail(),
+          user.getPhone(),
+          user.getRole(),
+          jwtService.generateToken(new CustomUserDetail(user)),
+          user.getDateOfBirth()
+    );
+  }
+
+  /**
+   * Performs user authentication using the provided credentials.
+   * Generates a JWT token for the authenticated user.
+   *
+   * @param authenticationRequest AuthenticationRequest containing user credentials
+   * @return AuthenticationResponse with user ID and JWT token
+   */
+  public AuthenticationResponse logIn(AuthenticationRequest authenticationRequest) {
+    var token = new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    CustomUserDetail customUserDetail = (CustomUserDetail) authenticationManager.authenticate(token).getPrincipal();
+    return AuthenticationResponse.builder()
+          .id(customUserDetail.getUser().getId())
+          .token(jwtService.generateToken(customUserDetail))
+          .build();
+  }
+
+  /**
+   * Checks if the provided username already exists in the database.
+   * Throws DuplicateException if a duplicate username is found.
+   *
+   * @param username Username to check for duplication
+   */
+  private void checkUsernameIfExist(String username) {
+    Optional<User> optionalUser = userRepository.findUserByUsername(username);
+    if (optionalUser.isPresent()) {
+      throw new DuplicateException(DUPLICATE_USERNAME_CODE);
     }
-
-    /**
-     * Performs user authentication using the provided credentials.
-     * Generates a JWT token for the authenticated user.
-     *
-     * @param authenticationRequest AuthenticationRequest containing user credentials
-     * @return AuthenticationResponse with user ID and JWT token
-     */
-    public AuthenticationResponse logIn(AuthenticationRequest authenticationRequest) {
-       var token = new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),authenticationRequest.getPassword());
-       CustomUserDetail customUserDetail = (CustomUserDetail) authenticationManager.authenticate(token).getPrincipal();
-       return AuthenticationResponse.builder()
-                .id(customUserDetail.getUser().getId())
-                .token(jwtService.generateToken(customUserDetail))
-                .build();
-    }
-
-    /**
-     * Checks if the provided username already exists in the database.
-     * Throws DuplicateException if a duplicate username is found.
-     *
-     * @param username Username to check for duplication
-     */
-    private void checkUsernameIfExist(String username){
-        Optional<User> optionalUser = userRepository.findUserByUsername(username);
-        if(optionalUser.isPresent()){
-            throw new DuplicateException(DUPLICATE_USERNAME_CODE);
-        }
-    }
+  }
 }

@@ -12,5 +12,6 @@ public class ExceptionCode {
   public static final String DUPLICATE_USERNAME_CODE = "com.example.springproject.exception.DuplicateExceptionUserName";
 
   public static final String BAD_CREDENTIALS_CODE = "com.example.springproject.exception.BadCredentials";
+  public static final String USER_NOT_FOUND_CODE = "com.example.springproject.exception.base.UserNotFoundException";
 
 }
