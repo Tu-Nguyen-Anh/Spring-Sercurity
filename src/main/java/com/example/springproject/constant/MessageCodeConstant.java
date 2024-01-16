@@ -12,5 +12,7 @@ public class MessageCodeConstant {
     public static final String DELETE_USER = "com.example.springproject.controller.delete";
     public static final String UPDATE_USER = "com.example.springproject.controller.update";
 
+    public static final String GET_USER = "com.example.springproject.controller.findById";
+
 
 }

@@ -17,20 +17,20 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class UserResponse {
-  private String id;
-  private String username;
-  private String email;
-  private String phone;
-  private Role role;
-  private String token;
-  private Date dateOfBirth;
+    private String id;
+    private String username;
+    private String email;
+    private String phone;
+    private Role role;
+    private String token;
+    private Date dateOfBirth;
 
-  public UserResponse(String id, String username, String email, String phone, Role role, Date dateOfBirth) {
-    this.id = id;
-    this.username = username;
-    this.email = email;
-    this.phone = phone;
-    this.role = role;
-    this.dateOfBirth = dateOfBirth;
-  }
+    public UserResponse(String id, String username, String email, String phone, Role role, Date dateOfBirth) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.dateOfBirth = dateOfBirth;
+    }
 }

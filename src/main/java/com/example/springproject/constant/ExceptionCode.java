@@ -13,5 +13,5 @@ public class ExceptionCode {
 
   public static final String BAD_CREDENTIALS_CODE = "com.example.springproject.exception.BadCredentials";
   public static final String USER_NOT_FOUND_CODE = "com.example.springproject.exception.base.UserNotFoundException";
-
+  public static final String INVALID_BRITH_CODE = "com.example.springproject.exception.base.DateInvalid";
 }

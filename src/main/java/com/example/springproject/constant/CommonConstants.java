@@ -15,6 +15,7 @@ public class CommonConstants {
   public static final String BEARER_TOKEN_PREFIX = "Bearer ";
   public static final int BEARER_PREFIX_LENGTH = 7;
   public static final String AUTHORIZATION_HEADER = "Authorization";
+  public static final String AUTHORIZATION_PREFIX = "ROLE_";
   public static final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
   public static final int AGE_THRESHOLD = 18;
 

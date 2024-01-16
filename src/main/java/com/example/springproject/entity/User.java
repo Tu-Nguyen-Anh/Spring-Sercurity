@@ -20,25 +20,25 @@ import java.util.Date;
 @Table(name = "user")
 @Builder
 public class User extends BaseEntityWithUpdater {
-  @Column(name = "username", unique = true)
-  private String username;
-  @Column(name = "password")
-  private String password;
-  @Column(name = "email")
-  private String email;
-  @Column(name = "phone")
-  private String phone;
-  @Column(name = "dateofbirth")
-  private Date dateOfBirth;
-  @Enumerated(EnumType.STRING)
-  private Role role;
+    @Column(name = "username", unique = true)
+    private String username;
+    @Column(name = "password")
+    private String password;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "dateofbirth")
+    private Date dateOfBirth;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-  public User(String username, String password, String email, String phone, Date dateOfBirth) {
-    this.username = username;
-    this.password = password;
-    this.email = email;
-    this.phone = phone;
-    this.dateOfBirth = dateOfBirth;
-    this.role = Role.USER;
-  }
+    public User(String username, String password, String email, String phone, Date dateOfBirth) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
+        this.role = Role.USER;
+    }
 }

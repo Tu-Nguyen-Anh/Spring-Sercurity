@@ -13,10 +13,10 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class UserUpdateResponse {
-  private String id;
-  private String username;
-  private String email;
-  private String phone;
-  private Role role;
-  private Date dateOfBirth;
+    private String id;
+    private String username;
+    private String email;
+    private String phone;
+    private Role role;
+    private Date dateOfBirth;
 }

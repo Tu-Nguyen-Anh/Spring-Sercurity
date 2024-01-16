@@ -10,6 +10,7 @@ import com.example.springproject.service.UserService;
 import com.example.springproject.service.base.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.springproject.constant.CommonConstants.*;
@@ -46,70 +47,96 @@ import static com.example.springproject.constant.MessageCodeConstant.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController {
-  private final UserService userService;
-  private final MessageService messageService;
+    private final UserService userService;
+    private final MessageService messageService;
 
-  /**
-   * Handles POST requests to create a new user.
-   *
-   * @param request  The request body containing user creation details.
-   * @param language The language for message localization.
-   * @return A ResponseEntity with a standardized response containing the localized message and the created user data.
-   */
-  @PostMapping
-  public ResponseGeneral<UserResponse> create(
-        @RequestBody UserRequest request,
-        @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
-  ) {
-    log.info("(create) Request : {}", request);
-    return ResponseGeneral.ofCreated(messageService.getMessage(CREATE_USER, language),
-          userService.create(request));
-  }
-  @PutMapping("/{id}")
-  public ResponseGeneral<UserUpdateResponse> update(
-        @RequestBody UserUpdateRequest request,
-        @PathVariable String id,
-        @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
-  ) {
-    log.info("(create) Request : {}", request);
-    return ResponseGeneral.ofSuccess(messageService.getMessage(UPDATE_USER, language),
-          userService.update(id,request));
-  }
+    /**
+     * Handles POST requests to create a new user.
+     *
+     * @param request  The request body containing user creation details.
+     * @param language The language for message localization.
+     * @return A ResponseEntity with a standardized response containing the localized message and the created user data.
+     */
+    @PostMapping("/create")
+    public ResponseGeneral<UserResponse> create(
+            @Validated
+            @RequestBody UserRequest request,
+            @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
+    ) {
+        log.info("(create) Request : {}", request);
+        return ResponseGeneral.ofCreated(messageService.getMessage(CREATE_USER, language),
+                userService.create(request));
+    }
 
-  /**
-   * Handles GET requests to retrieve all users.
-   *
-   * @param size     The number of users to include in each page of the result.
-   * @param page     The page number of the result to retrieve.
-   * @param language The language for message localization.
-   * @return A ResponseEntity with a standardized response containing the localized message and a paginated list of all users.
-   */
-  @GetMapping("/all")
-  public ResponseGeneral<PageResponse<UserResponse>> viewAllUser(
-        @RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
-        @RequestParam(name = "page", defaultValue = DEFAULT_PAGE_NUMBER) int page,
-        @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
-  ) {
-    log.info("(listAllUser) size : {}, page: {}", size, page);
-    return ResponseGeneral.ofSuccess(messageService.getMessage(LIST_USER, language),
-          userService.viewAll(size, page)
-    );
-  }
+    /**
+     * Handles PUT requests to update a user by ID.
+     *
+     * @param request  The request body containing updated user information.
+     * @param id       The ID of the user to update.
+     * @param language The language for message localization.
+     * @return A ResponseEntity with a standardized response containing the localized success message and updated user data.
+     */
+    @PutMapping("/update/{id}")
+    public ResponseGeneral<UserUpdateResponse> update(
+            @Validated
+            @RequestBody UserUpdateRequest request,
+            @PathVariable String id,
+            @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
+    ) {
+        log.info("(create) Request : {}", request);
+        return ResponseGeneral.ofSuccess(messageService.getMessage(UPDATE_USER, language),
+                userService.update(id,request));
+    }
 
-  /**
-   * Handles DELETE requests to delete a user by ID.
-   *
-   * @param id       The ID of the user to delete.
-   * @param language The language for message localization.
-   * @return A ResponseEntity with a standardized response containing the localized success message.
-   */
-  @DeleteMapping("{id}")
-  public ResponseGeneral<Void> delete(
-        @PathVariable String id,
-        @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
-  ) {
-    log.info("(delete) id : {}", id);
-    userService.delete(id);
-    return ResponseGeneral.ofSuccess(messageService.getMessage(DELETE_USER, language));
-  }
+    /**
+     * Handles GET requests to retrieve all users.
+     *
+     * @param size     The number of users to include in each page of the result.
+     * @param page     The page number of the result to retrieve.
+     * @param language The language for message localization.
+     * @return A ResponseEntity with a standardized response containing the localized message and a paginated list of all users.
+     */
+    @GetMapping("/all")
+    public ResponseGeneral<PageResponse<UserResponse>> viewAllUser(
+            @RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
+            @RequestParam(name = "page", defaultValue = DEFAULT_PAGE_NUMBER) int page,
+            @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
+    ) {
+        log.info("(listAllUser) size : {}, page: {}", size, page);
+        return ResponseGeneral.ofSuccess(messageService.getMessage(LIST_USER, language),
+                userService.viewAll(size, page)
+        );
+    }
+
+    /**
+     * Handles DELETE requests to delete a user by ID.
+     *
+     * @param id       The ID of the user to delete.
+     * @param language The language for message localization.
+     * @return A ResponseEntity with a standardized response containing the localized success message.
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseGeneral<Void> delete(
+            @PathVariable String id,
+            @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
+    ) {
+        log.info("(delete) id : {}", id);
+        userService.delete(id);
+        return ResponseGeneral.ofSuccess(messageService.getMessage(DELETE_USER, language));
+    }
+
+    /**
+     * Handles GET requests to retrieve a user by ID.
+     *
+     * @param id       The ID of the user to retrieve.
+     * @param language The language for message localization.
+     * @return A ResponseEntity with a standardized response containing the localized success message and user data.
+     */
+    @GetMapping("/get/{id}")
+    public ResponseGeneral<UserResponse> getUserById(
+            @PathVariable String id,
+            @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
+    ){
+        return ResponseGeneral.ofSuccess(messageService.getMessage(GET_USER, language), userService.getUserById(id));
+    }
 }

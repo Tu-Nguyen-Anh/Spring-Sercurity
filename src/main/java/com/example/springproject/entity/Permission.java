@@ -10,16 +10,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Permission {
 
-    ADMIN_READ("admin:read"),
-    ADMIN_UPDATE("admin:update"),
-    ADMIN_DELETE("admin:delete"),
-    ADMIN_CREATE("admin:create"),
-    MANAGER_READ("manager:read"),
-    MANAGER_UPDATE("manager:update"),
-    MANAGER_DELETE("manager:delete"),
-    MANAGER_CREATE("manager:create")
+    VIEW_ALL_USERS,
+    CREATE_USER,
+    UPDATE_USER,
+    VIEW_USER_DETAILS,
     ;
 
-    @Getter
-    private final String permission;
 }
