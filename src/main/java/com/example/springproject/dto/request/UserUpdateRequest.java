@@ -4,8 +4,12 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+
+import static com.example.springproject.constant.CommonConstants.DATE_FORMAT;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -39,5 +43,6 @@ public class UserUpdateRequest {
      * The date of birth for the user.
      */
     @Past
+    @DateTimeFormat(pattern = DATE_FORMAT)
     private Date dateOfBirth;
 }

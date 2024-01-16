@@ -18,5 +18,7 @@ public class CommonConstants {
   public static final String AUTHORIZATION_PREFIX = "ROLE_";
   public static final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
   public static final int AGE_THRESHOLD = 18;
+  public static final String DATE_FORMAT = "yyyy-MM-dd";
+
 
 }

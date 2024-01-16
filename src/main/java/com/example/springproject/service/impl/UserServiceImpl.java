@@ -126,7 +126,8 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
                     .build();
         }
 
-        if(!id.equals(customUserDetail.getUser().getId()) && customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.USER.name()))){
+        if(!id.equals(customUserDetail.getUser().getId()) && customUserDetail.getAuthorities().contains(
+              new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.USER.name()))){
             throw new BadRequestException();
         }
         User user = repository.findById(id).orElseThrow(UserNotFoundException::new);
