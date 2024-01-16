@@ -5,10 +5,8 @@ import com.example.springproject.dto.request.UserRequest;
 import com.example.springproject.dto.request.UserUpdateRequest;
 import com.example.springproject.dto.response.UserResponse;
 import com.example.springproject.dto.response.UserUpdateResponse;
-import com.example.springproject.entity.Permission;
 import com.example.springproject.entity.Role;
 import com.example.springproject.entity.User;
-import com.example.springproject.exception.InvalidDateOfBirthException;
 import com.example.springproject.exception.base.BadRequestException;
 import com.example.springproject.exception.base.DuplicateException;
 import com.example.springproject.exception.base.UserNotFoundException;
@@ -27,12 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.Optional;
 
-import static com.example.springproject.constant.CommonConstants.AGE_THRESHOLD;
 import static com.example.springproject.constant.CommonConstants.AUTHORIZATION_PREFIX;
 import static com.example.springproject.constant.ExceptionCode.DUPLICATE_USERNAME_CODE;
 

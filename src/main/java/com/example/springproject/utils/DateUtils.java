@@ -4,6 +4,7 @@ import com.example.springproject.exception.InvalidDateOfBirthException;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static com.example.springproject.constant.CommonConstants.AGE_THRESHOLD;
@@ -40,15 +41,17 @@ public class DateUtils {
      *
      * @param dateOfBirth
      */
+
     public static void checkDateOfBirth(Date dateOfBirth) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate currentDate = LocalDate.now();
-        LocalDate birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate birthDate = LocalDate.parse(dateOfBirth.toString(), formatter);
 
         int age = currentDate.getYear() - birthDate.getYear();
 
         if (currentDate.getMonthValue() < birthDate.getMonthValue() ||
-                (currentDate.getMonthValue() == birthDate.getMonthValue() &&
-                        currentDate.getDayOfMonth() < birthDate.getDayOfMonth())) {
+            (currentDate.getMonthValue() == birthDate.getMonthValue() &&
+             currentDate.getDayOfMonth() < birthDate.getDayOfMonth())) {
             age--;
         }
 
