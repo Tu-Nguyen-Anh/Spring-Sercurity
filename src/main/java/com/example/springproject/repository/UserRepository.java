@@ -4,8 +4,10 @@ import com.example.springproject.dto.response.UserResponse;
 import com.example.springproject.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -38,6 +40,9 @@ public interface UserRepository extends BaseRepository<User>{
     /**
      * Invokes a stored procedure named "REMOVE_ADMIN" to remove admin privileges.
      */
-    @Procedure(procedureName = "REMOVE_ADMIN")
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM User u WHERE u.username = 'admin'")
     void removeAdmin();
+
 }
