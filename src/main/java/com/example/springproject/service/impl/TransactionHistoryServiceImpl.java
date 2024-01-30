@@ -91,8 +91,4 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
   private String generateTransactionId() {
     return UUID.randomUUID().toString();
   }
-
-//    String accountReceive = rsaEncryptor.convertToDatabaseColumn(requestEncode.getAccountReceive());
-//    String accountSend = rsaEncryptor.convertToDatabaseColumn(requestEncode.getAccountSend());
-//    String amount = rsaEncryptor.convertToDatabaseColumn(requestEncode.getAmount());
 }

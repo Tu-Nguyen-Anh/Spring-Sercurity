@@ -44,9 +44,4 @@ public class TransactionHistoryController {
     return ResponseGeneral.ofCreated(messageService.getMessage(TRANSACTION, language),
           service.transactionHistory(transactionRequestEncode));
   }
-  //    TransactionRequestEncode transactionRequestEncode = new TransactionRequestEncode(
-//          rsaEncryptor.convertToDatabaseColumn(request.getAccountReceive()),
-//          rsaEncryptor.convertToDatabaseColumn(request.getAccountSend()),
-//          rsaEncryptor.convertToDatabaseColumn()
-//    );
 }

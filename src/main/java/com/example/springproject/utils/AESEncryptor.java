@@ -6,14 +6,18 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+
 import jakarta.persistence.AttributeConverter;
+
 import java.security.Key;
 import java.util.Base64;
+
+import static com.example.springproject.constant.CommonConstants.SYMMETRIC_ALGORITHM;
+
 @Component
 @Converter
 public class AESEncryptor implements AttributeConverter<String, String> {
 
-private static final String ALGORITHM = "AES";
 
   private Key key;
   private Cipher cipher;
@@ -21,15 +25,16 @@ private static final String ALGORITHM = "AES";
   @PostConstruct
   public void init() {
     try {
-      KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
+      KeyGenerator keyGenerator = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM);
       keyGenerator.init(256);
       this.key = keyGenerator.generateKey();
 
-      this.cipher = Cipher.getInstance(ALGORITHM);
+      this.cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM);
     } catch (Exception e) {
       throw new RuntimeException("Error initializing AESEncryptor", e);
     }
   }
+
   @Override
   public String convertToDatabaseColumn(String attribute) {
     try {
