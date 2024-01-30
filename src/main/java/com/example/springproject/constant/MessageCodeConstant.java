@@ -13,6 +13,8 @@ public class MessageCodeConstant {
     public static final String UPDATE_USER = "com.example.springproject.controller.update";
 
     public static final String GET_USER = "com.example.springproject.controller.findById";
+    public static final String TRANSACTION= "com.example.springproject.controller.transaction";
+
 
 
 }
