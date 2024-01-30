@@ -1,13 +1,9 @@
 package com.example.springproject.entity;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.UUID;
-
 import com.example.springproject.entity.base.BaseEntityWithUpdater;
 import com.example.springproject.utils.AESEncryptor;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

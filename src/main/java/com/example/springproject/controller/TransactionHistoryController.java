@@ -7,6 +7,7 @@ import com.example.springproject.dto.response.TransactionHistoryResponse;
 import com.example.springproject.service.TransactionHistoryService;
 import com.example.springproject.service.base.MessageService;
 import com.example.springproject.utils.RSAEncryptorUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class TransactionHistoryController {
 
   @PostMapping()
   public ResponseGeneral<TransactionHistoryResponse> create(
-        @Validated
+        @Valid
         @RequestBody TransactionHistoryRequest request,
         @RequestHeader(name = LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language
   ) {

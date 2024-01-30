@@ -129,33 +129,18 @@ public class ExceptionHandlerAdvice {
   }
 
   /**
-   * Handles BadCredentialsException and returns a 400 Bad Request response.
-   *
-   * @param ex      The BadCredentialsException instance.
-   * @param locale  The locale for response messages.
-   * @return ResponseEntity containing a ResponseGeneral with the error details.
-   */
-//  @ExceptionHandler(BadCredentialsException.class)
-//  @ResponseStatus(HttpStatus.BAD_REQUEST)
-//  public ResponseEntity<ResponseGeneral<Object>> handleBadCredentials(BadCredentialsException ex, Locale locale){
-//    String message = getMessage(BAD_CREDENTIALS_CODE, locale, null);
-//    ResponseGeneral<Object> response = ResponseGeneral.of(HttpStatus.BAD_REQUEST.value(), message, null);
-//    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//  }
-
-  /**
    * Handles generic RuntimeException and returns a 500 Internal Server Error response.
    *
    * @param locale  The locale for response messages.
    * @return ResponseEntity containing a ResponseGeneral with the error details.
    */
-//  @ExceptionHandler(RuntimeException.class)
-//  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//  public ResponseEntity<ResponseGeneral<Object>> handleGenericException(Locale locale) {
-//    String message = getMessage(GENERIC_CODE, locale, null);
-//    ResponseGeneral<Object> response = ResponseGeneral.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
-//    return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//  }
+  @ExceptionHandler(RuntimeException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ResponseEntity<ResponseGeneral<Object>> handleGenericException(Locale locale) {
+    String message = getMessage(GENERIC_CODE, locale, null);
+    ResponseGeneral<Object> response = ResponseGeneral.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
+    return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 
   /**
    * Utility method to retrieve localized error messages.
