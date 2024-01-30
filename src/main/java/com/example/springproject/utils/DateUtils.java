@@ -3,6 +3,7 @@ package com.example.springproject.utils;
 import com.example.springproject.exception.InvalidDateOfBirthException;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -36,7 +37,6 @@ public class DateUtils {
     }
 
     /**
-     * method that allows check Date Of Birth of users
      *
      * @param dateOfBirth
      */
@@ -44,15 +44,10 @@ public class DateUtils {
         LocalDate currentDate = LocalDate.now();
         LocalDate birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        int age = currentDate.getYear() - birthDate.getYear();
+        Period period = Period.between(birthDate, currentDate);
 
-        if (currentDate.getMonthValue() < birthDate.getMonthValue() ||
-                (currentDate.getMonthValue() == birthDate.getMonthValue() &&
-                        currentDate.getDayOfMonth() < birthDate.getDayOfMonth())) {
-            age--;
-        }
-
-        if (age < AGE_THRESHOLD) {
+        if (period.getYears() < AGE_THRESHOLD ||
+            (period.getYears() == AGE_THRESHOLD && (period.getMonths() > 0 || period.getDays() > 0))) {
             throw new InvalidDateOfBirthException();
         }
     }

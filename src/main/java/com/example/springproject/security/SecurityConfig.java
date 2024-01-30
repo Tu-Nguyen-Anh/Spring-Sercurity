@@ -68,9 +68,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authorize -> authorize.requestMatchers(whiteList()).permitAll()
-                                .requestMatchers("/api/v1/users/get/{id}").hasAuthority(Permission.VIEW_USER_DETAILS.name())
-                                .requestMatchers("/api/v1/users/update/{id}").hasAuthority(Permission.UPDATE_USER.name())
-                                .requestMatchers("/api/v1/users/all").hasAuthority(Permission.VIEW_ALL_USERS.name())
+//                                .requestMatchers("/api/v1/users/get/{id}").hasAuthority(Permission.VIEW_USER_DETAILS.name())
+//                                .requestMatchers("/api/v1/users/update/{id}").hasAuthority(Permission.UPDATE_USER.name())
+//                                .requestMatchers("/api/v1/users/all").hasAuthority(Permission.VIEW_ALL_USERS.name())
+                              .requestMatchers("/api/v1/users/**").authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -6,7 +6,6 @@ import com.example.springproject.dto.request.UserRequest;
 import com.example.springproject.dto.response.AuthenticationResponse;
 import com.example.springproject.dto.response.UserResponse;
 import com.example.springproject.service.base.MessageService;
-import com.example.springproject.service.base.MessageServiceImpl;
 import com.example.springproject.service.impl.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
