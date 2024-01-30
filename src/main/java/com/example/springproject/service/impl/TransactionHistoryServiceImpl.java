@@ -24,7 +24,11 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
   private final RSAEncryptorUtils rsaEncryptorUtils;
 
 
-  public TransactionHistoryServiceImpl(TransactionHistoryRepository repository, AESEncryptor aesEncryptor, RSAEncryptorUtils rsaEncryptorUtils) {
+  public TransactionHistoryServiceImpl(
+        TransactionHistoryRepository repository,
+        AESEncryptor aesEncryptor,
+        RSAEncryptorUtils rsaEncryptorUtils
+  ) {
     super(repository);
     this.repository = repository;
     this.aesEncryptor = aesEncryptor;
@@ -34,25 +38,10 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
   @Transactional
   @Override
   public TransactionHistoryResponse transactionHistory(TransactionRequestEncode requestEncode) {
+    TransactionHistoryRequest request = this.decryptRequest(requestEncode);
 
-    String accountReceive = rsaEncryptorUtils.decrypt(requestEncode.getAccountReceive());
-    String accountSend = rsaEncryptorUtils.decrypt(requestEncode.getAccountSend());
-    String amount = rsaEncryptorUtils.decrypt(requestEncode.getAmount());
-
-    log.info("(chua giai ma) TransactionRequestEncode:{}", requestEncode);
-
-    TransactionHistoryRequest request = new TransactionHistoryRequest(
-          accountReceive,
-          accountSend,
-          rsaEncryptorUtils.convertStringToBigDecimal(amount)
-    );
-    log.info("(da giai ma) request:{}", request);
-
-    BigDecimal have = request.getAmount();
-    BigDecimal inDebt = request.getAmount().negate();
-
-    String encryptedAccountReceive = aesEncryptor.convertToDatabaseColumn(request.getAccountReceive());
-    String encryptedAccountSend = aesEncryptor.convertToDatabaseColumn(request.getAccountSend());
+    String encryptedAccountReceive = this.encryptAccount(request.getAccountReceive());
+    String encryptedAccountSend = this.encryptAccount(request.getAccountSend());
 
     String transactionId = generateTransactionId();
 
@@ -60,7 +49,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           transactionId,
           encryptedAccountReceive,
           BigDecimal.ZERO,
-          have,
+          request.getAmount(),
           getCurrentDateString(),
           request.getAmount()
     );
@@ -69,7 +58,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
     TransactionHistory send = new TransactionHistory(
           transactionId,
           encryptedAccountSend,
-          inDebt,
+          request.getAmount().negate(),
           BigDecimal.ZERO,
           getCurrentDateString(),
           request.getAmount()
@@ -86,6 +75,22 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           send.getHave(),
           getCurrentDateString()
     );
+  }
+
+  private TransactionHistoryRequest decryptRequest(TransactionRequestEncode requestEncode) {
+    String accountReceive = rsaEncryptorUtils.decrypt(requestEncode.getAccountReceive());
+    String accountSend = rsaEncryptorUtils.decrypt(requestEncode.getAccountSend());
+    String amount = rsaEncryptorUtils.decrypt(requestEncode.getAmount());
+
+    return new TransactionHistoryRequest(
+          accountReceive,
+          accountSend,
+          rsaEncryptorUtils.convertStringToBigDecimal(amount)
+    );
+  }
+
+  private String encryptAccount(String accountId) {
+    return aesEncryptor.convertToDatabaseColumn(accountId);
   }
 
   private String generateTransactionId() {

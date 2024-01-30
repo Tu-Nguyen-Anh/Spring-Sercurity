@@ -17,8 +17,6 @@ import static com.example.springproject.constant.CommonConstants.SYMMETRIC_ALGOR
 @Component
 @Converter
 public class AESEncryptor implements AttributeConverter<String, String> {
-
-
   private Key key;
   private Cipher cipher;
 
