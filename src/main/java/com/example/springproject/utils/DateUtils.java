@@ -3,11 +3,14 @@ package com.example.springproject.utils;
 import com.example.springproject.exception.InvalidDateOfBirthException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static com.example.springproject.constant.CommonConstants.AGE_THRESHOLD;
+import static com.example.springproject.constant.CommonConstants.DATE_TIME_FORMAT;
 
 /**
  * Utility class for handling date-related operations.
@@ -23,7 +26,12 @@ public class DateUtils {
     public static String getCurrentDateString() {
         return LocalDate.now().toString();
     }
+    public static String getCurrentDateTimeString() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
+        return currentDateTime.format(formatter);
+    }
     /**
      * The getCurrentTimeMillis method in the provided code snippet
      * returns the current time in milliseconds since the epoch.

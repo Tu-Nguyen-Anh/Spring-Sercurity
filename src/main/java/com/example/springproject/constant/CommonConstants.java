@@ -16,6 +16,7 @@ public class CommonConstants {
   public static final String CHARSET_NAME = "UTF-8";
   public static final String RSA_ALGORITHM = "RSA";
   public static final String SYMMETRIC_ALGORITHM = "AES";
+  public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
   public static final String TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
 

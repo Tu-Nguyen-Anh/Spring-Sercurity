@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static com.example.springproject.utils.DateUtils.getCurrentDateString;
+import static com.example.springproject.utils.DateUtils.getCurrentDateTimeString;
 
 @Slf4j
 public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHistory> implements TransactionHistoryService {
@@ -50,7 +50,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           encryptedAccountReceive,
           BigDecimal.ZERO,
           request.getAmount(),
-          getCurrentDateString(),
+          getCurrentDateTimeString(),
           request.getAmount()
     );
     repository.save(receive);
@@ -60,7 +60,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           encryptedAccountSend,
           request.getAmount().negate(),
           BigDecimal.ZERO,
-          getCurrentDateString(),
+          getCurrentDateTimeString(),
           request.getAmount()
     );
     repository.save(send);
@@ -73,19 +73,15 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           aesEncryptor.convertToEntityAttribute(encryptedAccountSend),
           send.getInDebt(),
           send.getHave(),
-          getCurrentDateString()
+          getCurrentDateTimeString()
     );
   }
 
   private TransactionHistoryRequest decryptRequest(TransactionRequestEncode requestEncode) {
-    String accountReceive = rsaEncryptorUtils.decrypt(requestEncode.getAccountReceive());
-    String accountSend = rsaEncryptorUtils.decrypt(requestEncode.getAccountSend());
-    String amount = rsaEncryptorUtils.decrypt(requestEncode.getAmount());
-
     return new TransactionHistoryRequest(
-          accountReceive,
-          accountSend,
-          rsaEncryptorUtils.convertStringToBigDecimal(amount)
+          rsaEncryptorUtils.decrypt(requestEncode.getAccountReceive()),
+          rsaEncryptorUtils.decrypt(requestEncode.getAccountSend()),
+          rsaEncryptorUtils.convertStringToBigDecimal(rsaEncryptorUtils.decrypt(requestEncode.getAmount()))
     );
   }
 
