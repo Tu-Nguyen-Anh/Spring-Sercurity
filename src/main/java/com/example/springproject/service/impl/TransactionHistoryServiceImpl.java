@@ -34,6 +34,11 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
     this.rsaEncryptorUtils = rsaEncryptorUtils;
   }
 
+  /**
+   *Receive encrypted request from Controller and decrypt then save to database
+   * @param requestEncode
+   * @return
+   */
   @Transactional
   @Override
   public TransactionHistoryResponse transactionHistory(TransactionRequestEncode requestEncode) {
@@ -76,6 +81,11 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
     );
   }
 
+  /**
+   * Encrypt request
+   * @param request
+   * @return
+   */
   @Override
   public TransactionRequestEncode encrypt(TransactionHistoryRequest request) {
     return new TransactionRequestEncode(
@@ -85,6 +95,12 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
     );
   }
 
+  /**
+   * Decrypt Request from Controller
+   * @param requestEncode
+   * @return
+   */
+
   private TransactionHistoryRequest decryptRequest(TransactionRequestEncode requestEncode) {
     return new TransactionHistoryRequest(
           rsaEncryptorUtils.decrypt(requestEncode.getAccountReceive()),
@@ -93,9 +109,19 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
     );
   }
 
+  /**
+   * Method encrypt AccountId
+   * @param accountId
+   * @return
+   */
   private String encryptAccount(String accountId) {
     return aesEncryptor.convertToDatabaseColumn(accountId);
   }
+
+  /**
+   * Random TransactionId
+   * @return
+   */
 
   private String generateTransactionId() {
     return UUID.randomUUID().toString();

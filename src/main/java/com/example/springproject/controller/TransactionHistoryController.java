@@ -23,6 +23,13 @@ import static com.example.springproject.constant.MessageCodeConstant.TRANSACTION
 public class TransactionHistoryController {
   private final TransactionHistoryService service;
   private final MessageService messageService;
+
+  /**
+   * Receive the request, then encrypt it and send it encrypted to the service
+   * @param request
+   * @param language
+   * @return
+   */
   @PostMapping()
   public ResponseGeneral<TransactionHistoryResponse> create(
         @Valid
