@@ -50,6 +50,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
 
     String transactionId = generateTransactionId();
     String currentDateTime = getCurrentDateTimeString();
+
     TransactionHistory receive = new TransactionHistory(
           transactionId,
           encryptedAccountReceive,
