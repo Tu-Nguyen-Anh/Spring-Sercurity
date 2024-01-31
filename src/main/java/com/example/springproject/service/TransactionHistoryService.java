@@ -6,4 +6,5 @@ import com.example.springproject.dto.response.TransactionHistoryResponse;
 
 public interface TransactionHistoryService {
   TransactionHistoryResponse transactionHistory(TransactionRequestEncode requestEncode);
+  TransactionRequestEncode encrypt(TransactionHistoryRequest request);
 }

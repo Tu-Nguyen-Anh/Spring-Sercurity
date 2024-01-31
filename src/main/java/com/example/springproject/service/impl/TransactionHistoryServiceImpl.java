@@ -23,7 +23,6 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
   private final AESEncryptor aesEncryptor;
   private final RSAEncryptorUtils rsaEncryptorUtils;
 
-
   public TransactionHistoryServiceImpl(
         TransactionHistoryRepository repository,
         AESEncryptor aesEncryptor,
@@ -74,6 +73,15 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           send.getInDebt(),
           send.getHave(),
           getCurrentDateTimeString()
+    );
+  }
+
+  @Override
+  public TransactionRequestEncode encrypt(TransactionHistoryRequest request) {
+    return new TransactionRequestEncode(
+          rsaEncryptorUtils.encrypt(request.getAccountReceive()),
+          rsaEncryptorUtils.encrypt(request.getAccountSend()),
+          rsaEncryptorUtils.encrypt(rsaEncryptorUtils.convertBigDecimalToString(request.getAmount()))
     );
   }
 
