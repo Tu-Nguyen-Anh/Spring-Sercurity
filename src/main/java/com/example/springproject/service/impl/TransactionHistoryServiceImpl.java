@@ -35,7 +35,8 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
   }
 
   /**
-   *Receive encrypted request from Controller and decrypt then save to database
+   * Receive encrypted request from Controller and decrypt then save to database
+   *
    * @param requestEncode
    * @return
    */
@@ -48,13 +49,13 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
     String encryptedAccountSend = this.encryptAccount(request.getAccountSend());
 
     String transactionId = generateTransactionId();
-
+    String currentDateTime = getCurrentDateTimeString();
     TransactionHistory receive = new TransactionHistory(
           transactionId,
           encryptedAccountReceive,
           BigDecimal.ZERO,
           request.getAmount(),
-          getCurrentDateTimeString(),
+          currentDateTime,
           request.getAmount()
     );
     repository.save(receive);
@@ -64,7 +65,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           encryptedAccountSend,
           request.getAmount().negate(),
           BigDecimal.ZERO,
-          getCurrentDateTimeString(),
+          currentDateTime,
           request.getAmount()
     );
     repository.save(send);
@@ -77,12 +78,13 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
           aesEncryptor.convertToEntityAttribute(encryptedAccountSend),
           send.getInDebt(),
           send.getHave(),
-          getCurrentDateTimeString()
+          currentDateTime
     );
   }
 
   /**
    * Encrypt request
+   *
    * @param request
    * @return
    */
@@ -97,6 +99,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
 
   /**
    * Decrypt Request from Controller
+   *
    * @param requestEncode
    * @return
    */
@@ -111,6 +114,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
 
   /**
    * Method encrypt AccountId
+   *
    * @param accountId
    * @return
    */
@@ -120,6 +124,7 @@ public class TransactionHistoryServiceImpl extends BaseServiceImpl<TransactionHi
 
   /**
    * Random TransactionId
+   *
    * @return
    */
 

@@ -1,5 +1,7 @@
 package com.example.springproject.utils;
 
+import com.example.springproject.exception.ErrorDecrytException;
+import com.example.springproject.exception.ErrorEncrytException;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -28,7 +30,7 @@ public class RSAEncryptorUtils {
       this.rsaCipher = Cipher.getInstance(TRANSFORMATION);
       this.symmetricCipher = Cipher.getInstance(SYMMETRIC_ALGORITHM);
     } catch (Exception e) {
-      throw new RuntimeException("Error initializing RSAEncryptor", e);
+      throw new ErrorEncrytException();
     }
   }
 
@@ -50,7 +52,7 @@ public class RSAEncryptorUtils {
 
       return Base64.getEncoder().encodeToString(result);
     } catch (Exception e) {
-      throw new RuntimeException("Error encrypting data", e);
+      throw new ErrorEncrytException();
     }
   }
 
@@ -72,7 +74,7 @@ public class RSAEncryptorUtils {
 
       return new String(decryptedData, CHARSET_NAME);
     } catch (Exception e) {
-      throw new RuntimeException("Error decrypting data", e);
+      throw new ErrorDecrytException();
     }
   }
 

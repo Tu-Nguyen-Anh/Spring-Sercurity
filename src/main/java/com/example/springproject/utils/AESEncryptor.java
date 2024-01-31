@@ -1,5 +1,7 @@
 package com.example.springproject.utils;
 
+import com.example.springproject.exception.ErrorDecrytException;
+import com.example.springproject.exception.ErrorEncrytException;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.Converter;
 import org.springframework.stereotype.Component;
@@ -29,7 +31,7 @@ public class AESEncryptor implements AttributeConverter<String, String> {
 
       this.cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM);
     } catch (Exception e) {
-      throw new RuntimeException("Error initializing AESEncryptor", e);
+      throw new ErrorEncrytException();
     }
   }
 
@@ -40,7 +42,7 @@ public class AESEncryptor implements AttributeConverter<String, String> {
       byte[] encryptedBytes = cipher.doFinal(attribute.getBytes());
       return Base64.getEncoder().encodeToString(encryptedBytes);
     } catch (Exception e) {
-      throw new RuntimeException("Error encrypting data", e);
+      throw new ErrorEncrytException();
     }
   }
 
@@ -51,7 +53,7 @@ public class AESEncryptor implements AttributeConverter<String, String> {
       byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(dbData));
       return new String(decryptedBytes);
     } catch (Exception e) {
-      throw new RuntimeException("Error decrypting data", e);
+      throw new ErrorDecrytException();
     }
   }
 

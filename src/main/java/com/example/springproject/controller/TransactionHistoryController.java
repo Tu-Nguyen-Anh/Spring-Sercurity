@@ -28,9 +28,9 @@ public class TransactionHistoryController {
    * Receive the request, then encrypt it and send it encrypted to the service
    * @param request
    * @param language
-   * @return
+   * @return request encrypt
    */
-  @PostMapping()
+  @PostMapping
   public ResponseGeneral<TransactionHistoryResponse> create(
         @Valid
         @RequestBody TransactionHistoryRequest request,

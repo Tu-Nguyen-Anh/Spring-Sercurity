@@ -26,6 +26,11 @@ public class DateUtils {
     public static String getCurrentDateString() {
         return LocalDate.now().toString();
     }
+
+    /**
+     * This method to get Current Date Time String
+     * @return currentDateTime
+     */
     public static String getCurrentDateTimeString() {
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
