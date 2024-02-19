@@ -5,6 +5,7 @@ import com.example.springproject.dto.request.UserRequest;
 import com.example.springproject.dto.request.UserUpdateRequest;
 import com.example.springproject.dto.response.UserResponse;
 import com.example.springproject.dto.response.UserUpdateResponse;
+import com.example.springproject.entity.Role;
 import com.example.springproject.entity.User;
 import com.example.springproject.exception.base.BadRequestException;
 import com.example.springproject.exception.base.DuplicateException;
@@ -13,9 +14,15 @@ import com.example.springproject.repository.UserRepository;
 import com.example.springproject.security.CustomUserDetail;
 import com.example.springproject.service.UserService;
 import com.example.springproject.service.base.BaseServiceImpl;
+import com.example.springproject.utils.DateUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,16 +31,20 @@ import java.util.Date;
 import java.util.Optional;
 
 import static com.example.springproject.constant.CommonConstants.AGE_THRESHOLD;
+import static com.example.springproject.constant.CommonConstants.AUTHORIZATION_PREFIX;
 import static com.example.springproject.constant.ExceptionCode.DUPLICATE_USERNAME_CODE;
 
 public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
   private final UserRepository repository;
   private final JwtService jwtService;
 
-  public UserServiceImpl(UserRepository repository, JwtService jwtService) {
+  private final PasswordEncoder passwordEncoder;
+
+  public UserServiceImpl(UserRepository repository, JwtService jwtService, PasswordEncoder passwordEncoder) {
     super(repository);
     this.repository = repository;
     this.jwtService = jwtService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   /**
@@ -46,12 +57,12 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
   @Transactional
   @Override
   public UserResponse create(UserRequest request) {
-    this.checkDateOfBirth(request.getDateOfBirth());
+    DateUtils.checkDateOfBirth(request.getDateOfBirth());
     this.checkUsernameIfExist(request.getUsername());
 
     User user = new User(
           request.getUsername(),
-          request.getPassword(),
+          passwordEncoder.encode(request.getPassword()),
           request.getEmail(),
           request.getPhone(),
           request.getDateOfBirth()
@@ -79,7 +90,8 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
   @Override
   @Transactional
   public UserUpdateResponse update(String id, UserUpdateRequest request) {
-    this.checkDateOfBirth(request.getDateOfBirth());
+
+    DateUtils.checkDateOfBirth(request.getDateOfBirth());
     User user = this.checkUserExist(id);
 
     this.setValueForUpdate(user, request);
@@ -93,6 +105,43 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
           user.getRole(),
           user.getDateOfBirth()
     );
+  }
+
+  /**
+   * Retrieves user information by ID.
+   *
+   * @param id The ID of the user to retrieve.
+   * @return The UserResponse containing user details.
+   * @throws UserNotFoundException if the user with the specified ID is not found.
+   * @throws BadRequestException    if the request is invalid.
+   */
+  @Override
+  public UserResponse getUserById(String id){
+    CustomUserDetail customUserDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if(customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.ADMIN.name()))){
+      User user = repository.findById(id).orElseThrow(UserNotFoundException::new);
+      return UserResponse.builder()
+            .id(user.getId())
+            .phone(user.getPhone())
+            .role(user.getRole())
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .dateOfBirth(user.getDateOfBirth())
+            .build();
+    }
+
+    if(!id.equals(customUserDetail.getUser().getId()) && customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.USER.name()))){
+      throw new BadRequestException();
+    }
+    User user = repository.findById(id).orElseThrow(UserNotFoundException::new);
+    return UserResponse.builder()
+          .id(user.getId())
+          .phone(user.getPhone())
+          .role(user.getRole())
+          .username(user.getUsername())
+          .email(user.getEmail())
+          .dateOfBirth(user.getDateOfBirth())
+          .build();
   }
 
   /**
@@ -120,27 +169,6 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     return PageResponse.of(listAllUsers.getContent(), (int) listAllUsers.getTotalElements());
   }
 
-  /**
-   * method that allows check Date Of Birth of users
-   *
-   * @param dateOfBirth
-   */
-  private void checkDateOfBirth(Date dateOfBirth) {
-    LocalDate currentDate = LocalDate.now();
-    LocalDate birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-    int age = currentDate.getYear() - birthDate.getYear();
-
-    if (currentDate.getMonthValue() < birthDate.getMonthValue() ||
-        (currentDate.getMonthValue() == birthDate.getMonthValue() &&
-         currentDate.getDayOfMonth() < birthDate.getDayOfMonth())) {
-      age--;
-    }
-
-    if (age < AGE_THRESHOLD) {
-      throw new BadRequestException();
-    }
-  }
 
   /**
    * method that allows check Username Exist
@@ -171,9 +199,36 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
    * @param update
    */
   private void setValueForUpdate(User user, UserUpdateRequest update) {
-    user.setPassword(update.getPassword());
+    user.setPassword(passwordEncoder.encode(update.getPassword()));
     user.setPhone(update.getPhone());
     user.setEmail(update.getEmail());
     user.setDateOfBirth(update.getDateOfBirth());
   }
+
+  /**
+   * Initializes the application by creating an admin user.
+   * This method is annotated with @PostConstruct to ensure it runs after the bean is constructed.
+   */
+  @PostConstruct
+  @Transactional
+  void createAdmin() {
+    repository.removeAdmin();
+    User admin = User.builder().
+          username("admin").
+          password(passwordEncoder.encode("123456")).
+          role(Role.ADMIN).
+          build();
+    repository.save(admin);
+  }
+
+  /**
+   * Cleans up resources and removes the admin user during application shutdown.
+   * This method is annotated with @PreDestroy to ensure it runs before the bean is destroyed.
+   */
+  @PreDestroy
+  @Transactional
+  void deleteAdmin() {
+    repository.removeAdmin();
+  }
+
 }
