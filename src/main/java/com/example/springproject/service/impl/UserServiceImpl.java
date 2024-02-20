@@ -25,19 +25,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.Optional;
 
-import static com.example.springproject.constant.CommonConstants.AGE_THRESHOLD;
 import static com.example.springproject.constant.CommonConstants.AUTHORIZATION_PREFIX;
 import static com.example.springproject.constant.ExceptionCode.DUPLICATE_USERNAME_CODE;
 
 public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
   private final UserRepository repository;
   private final JwtService jwtService;
-
   private final PasswordEncoder passwordEncoder;
 
   public UserServiceImpl(UserRepository repository, JwtService jwtService, PasswordEncoder passwordEncoder) {
@@ -113,12 +108,12 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
    * @param id The ID of the user to retrieve.
    * @return The UserResponse containing user details.
    * @throws UserNotFoundException if the user with the specified ID is not found.
-   * @throws BadRequestException    if the request is invalid.
+   * @throws BadRequestException   if the request is invalid.
    */
   @Override
-  public UserResponse getUserById(String id){
+  public UserResponse getUserById(String id) {
     CustomUserDetail customUserDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    if(customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.ADMIN.name()))){
+    if (customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.ADMIN.name()))) {
       User user = repository.findById(id).orElseThrow(UserNotFoundException::new);
       return UserResponse.builder()
             .id(user.getId())
@@ -130,7 +125,8 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             .build();
     }
 
-    if(!id.equals(customUserDetail.getUser().getId()) && customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.USER.name()))){
+    if (!id.equals(customUserDetail.getUser().getId())
+        && customUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AUTHORIZATION_PREFIX + Role.USER.name()))) {
       throw new BadRequestException();
     }
     User user = repository.findById(id).orElseThrow(UserNotFoundException::new);

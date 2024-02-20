@@ -1,10 +1,10 @@
 package com.example.springproject.entity;
 
+import com.example.springproject.constant.CommonConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -17,23 +17,15 @@ import static com.example.springproject.entity.Permission.*;
  */
 @RequiredArgsConstructor
 public enum Role {
-    USER(Collections.emptySet()),
-    ADMIN(Set.of(
-            ADMIN_READ,
-            ADMIN_CREATE,
-            ADMIN_DELETE,
-            ADMIN_UPDATE,
-            MANAGER_CREATE,
-            MANAGER_UPDATE,
-            MANAGER_DELETE,
-            MANAGER_READ
+    USER(Set.of(
+          VIEW_USER_DETAILS
     )),
-    MANAGER(Set.of(
-            MANAGER_DELETE,
-            MANAGER_CREATE,
-            MANAGER_UPDATE,
-            MANAGER_READ
-    ))
+    ADMIN(Set.of(
+          VIEW_ALL_USERS,
+          CREATE_USER,
+          UPDATE_USER,
+          VIEW_USER_DETAILS
+    )),
 
 
     ;
@@ -44,10 +36,10 @@ public enum Role {
 
     public List<SimpleGrantedAuthority> getAuthorities(){
         var authorities = new java.util.ArrayList<>(getPermissionSet()
-                .stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
-                .toList());
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+              .stream()
+              .map(permission -> new SimpleGrantedAuthority(permission.name()))
+              .toList());
+        authorities.add(new SimpleGrantedAuthority(CommonConstants.AUTHORIZATION_PREFIX + this.name()));
         return authorities;
     }
 }

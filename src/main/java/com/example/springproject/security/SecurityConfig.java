@@ -1,5 +1,7 @@
 package com.example.springproject.security;
 
+import com.example.springproject.entity.Permission;
+import com.example.springproject.entity.Role;
 import com.example.springproject.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,9 +50,9 @@ public class SecurityConfig {
      */
     private String[] whiteList() {
         return new String[]{
-                "/api/auth/**",
-                "/swagger-ui/**",
-                "/v3/api-docs/**"
+              "/api/auth/**",
+              "/swagger-ui/**",
+              "/v3/api-docs/**"
         };
     }
 
@@ -64,16 +66,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-//              .authorizeHttpRequests(
-//                    authorize -> authorize.anyRequest().permitAll()
-//              )
-                .authorizeHttpRequests(
-                        authorize -> authorize.requestMatchers(whiteList()).permitAll()
-                                .requestMatchers("/api/v1/users/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                )
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .build();
+              .csrf(AbstractHttpConfigurer::disable)
+              .authorizeHttpRequests(
+                    authorize -> {
+                        authorize.requestMatchers(whiteList()).permitAll();
+                        // Using the roll has full authority to provide endpoint and permission name for this config loop
+                        // We're using ADMIN roll
+                        for(Permission p : ADMIN.getPermissionSet()){
+                            authorize.requestMatchers(p.getEndPoints()).hasAuthority(p.name());
+                        }
+                    }
+              )
+              .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+              .build();
     }
 
     /**
